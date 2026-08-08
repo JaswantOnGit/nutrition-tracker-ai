@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Architecture Diagram</title>
+<style>
+  :root {
+    --navy-950: #0A1B33;
+    --navy-900: #0E2647;
+    --navy-800: #163A66;
+    --navy-700: #1F4E86;
+    --blue-500: #3B7DD8;
+    --blue-100: #E7F0FC;
+    --amber-600: #C6871F;
+    --amber-500: #E0A63C;
+    --amber-100: #FBF1DE;
+    --green-600: #1F8F5F;
+    --green-500: #2FA872;
+    --green-100: #E4F5EC;
+    --ink: #0A1B33;
+    --muted: #5C6B84;
+    --line: #C9D3E3;
+    --bg: #F4F6FA;
+    --panel: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin:0; padding:0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Poppins', 'Liberation Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #stage {
+    width: 1240px;
+    padding: 56px 64px 48px 64px;
+    background:
+      radial-gradient(1000px 400px at 85% -10%, rgba(59,125,216,0.08), transparent 60%),
+      var(--bg);
+  }
+
+  /* ---------- HEADER ---------- */
+  .eyebrow {
+    display:flex; align-items:center; gap:10px;
+    font-family: 'Liberation Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blue-700, var(--navy-700));
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  .eyebrow .dot { width:7px; height:7px; border-radius:50%; background: var(--green-500); box-shadow: 0 0 0 3px var(--green-100); }
+
+  h1 {
+    font-size: 33px;
+    font-weight: 700;
+    color: var(--navy-950);
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    font-size: 15.5px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-bottom: 4px;
+  }
+  .subtitle b { color: var(--navy-800); font-weight: 600; }
+
+  .header-row {
+    display:flex; justify-content: space-between; align-items: flex-end;
+    border-bottom: 2px solid var(--navy-950);
+    padding-bottom: 22px;
+    margin-bottom: 40px;
+  }
+  .role-tag {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 11.5px;
+    color: var(--navy-900);
+    background: var(--blue-100);
+    border: 1px solid var(--blue-500);
+    padding: 7px 14px;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+
+  /* ---------- FLOW LAYOUT ---------- */
+  .flow { display:flex; flex-direction:column; align-items:center; }
+
+  .node {
+    width: 620px;
+    background: var(--panel);
+    border: 1.5px solid var(--navy-950);
+    border-radius: 8px;
+    box-shadow: 0 1px 0 rgba(10,27,51,0.04);
+    position: relative;
+  }
+  .node-head {
+    display:flex; align-items:center; gap: 12px;
+    padding: 16px 22px;
+  }
+  .node-icon {
+    width: 38px; height: 38px; border-radius: 7px;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 19px; flex-shrink:0;
+  }
+  .node-title { font-size: 17px; font-weight: 700; color: var(--navy-950); }
+  .node-kicker {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 10.5px; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--muted); font-weight: 700; margin-bottom: 2px;
+  }
+  .node-body {
+    padding: 0 22px 18px 22px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .node-body code {
+    font-family:'Liberation Mono', monospace;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    padding: 1px 6px;
+    border-radius: 4px;
+    color: var(--navy-800);
+    font-size: 12px;
+  }
+
+  .node.navy   .node-icon { background: var(--navy-950); color:#fff; }
+  .node.blue   .node-icon { background: var(--blue-100); color: var(--blue-700, var(--navy-800)); border: 1.5px solid var(--blue-500); }
+  .node.green  .node-icon { background: var(--green-100); color: var(--green-600); border: 1.5px solid var(--green-500); }
+  .node.amber  .node-icon { background: var(--amber-100); color: var(--amber-600); border: 1.5px solid var(--amber-500); }
+
+  /* connectors */
+  .connector {
+    display:flex; flex-direction:column; align-items:center;
+    padding: 10px 0;
+  }
+  .connector .line { width: 2px; height: 20px; background: var(--line); }
+  .connector .label {
+    font-family: 'Liberation Mono', monospace;
+    font-size: 11px;
+    color: var(--navy-700);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin: 2px 0;
+    white-space: nowrap;
+  }
+  .connector .arrow {
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 8px solid var(--navy-950);
+  }
+
+  /* data layer: two boxes side by side */
+  .data-layer {
+    display:flex; align-items:flex-start; gap: 0px;
+    width: 620px;
+  }
+  .data-box {
+    flex: 1;
+    background: var(--panel);
+    border: 1.5px solid var(--navy-950);
+    border-radius: 8px;
+    padding: 14px 18px;
+  }
+  .data-box .dtitle { font-size: 14.5px; font-weight: 700; color: var(--navy-950); margin-bottom: 6px; display:flex; align-items:center; gap:8px;}
+  .data-box .dtitle .sq { width:9px; height:9px; background: var(--blue-500); border-radius:2px; flex-shrink:0; }
+  .data-box ul { list-style: none; }
+  .data-box li {
+    font-size: 12px; color: var(--muted); padding: 3px 0 3px 14px; position:relative;
+  }
+  .data-box li::before { content:"–"; position:absolute; left:0; color: var(--line); }
+  .data-gap { width: 22px; display:flex; align-items:center; justify-content:center; padding-top: 46px; }
+  .data-gap .rel {
+    font-family:'Liberation Mono', monospace;
+    font-size: 9.5px; color: var(--blue-500); writing-mode: vertical-rl;
+    letter-spacing: 1px; text-transform:uppercase; font-weight:700;
+  }
+
+  /* governance strip */
+  .gov-wrap { margin-top: 46px; }
+  .gov-title {
+    display:flex; align-items:center; gap:10px;
+    margin-bottom: 16px;
+  }
+  .gov-title .bar { width: 4px; height: 16px; background: var(--amber-500); border-radius: 2px; }
+  .gov-title span {
+    font-family:'Liberation Mono', monospace;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    font-weight: 700; color: var(--navy-950);
+  }
+  .gov-row { display:flex; gap: 14px; }
+  .gov-pill {
+    flex:1;
+    background: var(--amber-100);
+    border: 1.5px solid var(--amber-500);
+    border-radius: 8px;
+    padding: 13px 16px;
+  }
+  .gov-pill .gp-title { font-size: 13px; font-weight: 700; color: var(--navy-950); margin-bottom: 3px; }
+  .gov-pill .gp-sub { font-size: 11px; color: var(--muted); line-height:1.4; }
+
+  /* footer */
+  .footer {
+    display:flex; justify-content: space-between; align-items:center;
+    margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line);
+  }
+  .footer .fl { display:flex; align-items:center; gap:10px; }
+  .footer .avatar {
+    width: 30px; height:30px; border-radius:50%;
+    background: var(--navy-950); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 12px; font-weight:700; font-family:'Poppins', sans-serif;
+  }
+  .footer .fname { font-size: 12.5px; font-weight:700; color: var(--navy-950); }
+  .footer .frole { font-size: 11px; color: var(--muted); }
+  .footer .fright { font-family:'Liberation Mono', monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <div class="header-row">
+    <div>
+      <div class="eyebrow"><span class="dot"></span>PRODUCTION-PATTERN ARCHITECTURE</div>
+      <h1>AI-Powered Nutrition Tracking System</h1>
+      <div class="subtitle">Conversational logging layer over a governed data store — <b>Claude ⇄ Notion</b> integration</div>
+    </div>
+    <div class="role-tag">AI IMPLEMENTATION PM</div>
+  </div>
+
+  <div class="flow">
+
+    <!-- USER INPUT -->
+    <div class="node navy" style="width:460px;">
+      <div class="node-head">
+        <div class="node-icon">👤</div>
+        <div>
+          <div class="node-kicker">Input</div>
+          <div class="node-title">User — Natural Language</div>
+        </div>
+      </div>
+      <div class="node-body">"I had a chicken bowl for lunch, about 500 calories."</div>
+    </div>
+
+    <div class="connector">
+      <div class="line"></div>
+      <div class="label">unstructured meal description</div>
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- REASONING LAYER -->
+    <div class="node blue">
+      <div class="node-head">
+        <div class="node-icon">🧠</div>
+        <div>
+          <div class="node-kicker">Reasoning Layer</div>
+          <div class="node-title">Claude.ai Project — NextBite</div>
+        </div>
+      </div>
+      <div class="node-body">
+        Persistent project instructions hold daily targets and logging rules. Claude parses the message, estimates <code>calories / protein / carbs / fats</code>, and drafts a structured entry for confirmation before any write occurs.
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="line"></div>
+      <div class="label">confirmed write request</div>
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- INTEGRATION LAYER -->
+    <div class="node green" style="width:460px;">
+      <div class="node-head">
+        <div class="node-icon">🔐</div>
+        <div>
+          <div class="node-kicker">Integration Layer</div>
+          <div class="node-title">Notion Connector</div>
+        </div>
+      </div>
+      <div class="node-body">OAuth-based connector authentication — no manual copy-paste between systems.</div>
+    </div>
+
+    <div class="connector">
+      <div class="line"></div>
+      <div class="label">structured record write</div>
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- DATA LAYER -->
+    <div class="data-layer">
+      <div class="data-box">
+        <div class="dtitle"><span class="sq"></span>Calorie Logs</div>
+        <ul>
+          <li>Item name · meal type · date</li>
+          <li>Calories, protein (g), carbs (g), fats (g)</li>
+          <li>Relation → daily target</li>
+        </ul>
+      </div>
+      <div class="data-gap"><span class="rel">relation</span></div>
+      <div class="data-box">
+        <div class="dtitle"><span class="sq"></span>Macro Targets</div>
+        <ul>
+          <li>Daily calorie / macro goals</li>
+          <li>Auto-pulled "today's calories"</li>
+          <li>% breakdown via live formulas</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="line"></div>
+      <div class="label">read on demand</div>
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- AUTOMATION LAYER -->
+    <div class="node amber">
+      <div class="node-head">
+        <div class="node-icon">⚙️</div>
+        <div>
+          <div class="node-kicker">Automation Layer</div>
+          <div class="node-title">Claude Skill — Goal Progress Checker</div>
+        </div>
+      </div>
+      <div class="node-body">
+        Reusable logic packaged as a Skill: pulls targets dynamically from Notion, groups logs by day, flags macros consistently under or over target, and surfaces one data-backed insight — not a hardcoded script tied to one conversation.
+      </div>
+    </div>
+
+    <div class="connector">
+      <div class="line"></div>
+      <div class="label">progress summary</div>
+      <div class="line"></div>
+      <div class="arrow"></div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="node navy" style="width:460px;">
+      <div class="node-head">
+        <div class="node-icon">✅</div>
+        <div>
+          <div class="node-kicker">Output</div>
+          <div class="node-title">Confirmation + Progress Reply</div>
+        </div>
+      </div>
+      <div class="node-body">"Logged. 850 kcal remaining today, protein on track."</div>
+    </div>
+
+  </div>
+
+  <!-- GOVERNANCE STRIP -->
+  <div class="gov-wrap">
+    <div class="gov-title"><span class="bar"></span><span>Governance Layer — applied across every stage above</span></div>
+    <div class="gov-row">
+      <div class="gov-pill">
+        <div class="gp-title">📄 Project Charter</div>
+        <div class="gp-sub">Scope + explicit exclusions</div>
+      </div>
+      <div class="gov-pill">
+        <div class="gp-title">⚠️ RAID Log</div>
+        <div class="gp-sub">Macro estimation risk + mitigation</div>
+      </div>
+      <div class="gov-pill">
+        <div class="gp-title">🧭 RACI</div>
+        <div class="gp-sub">Owner of data accuracy vs. logic</div>
+      </div>
+      <div class="gov-pill">
+        <div class="gp-title">🧪 Quality Gate</div>
+        <div class="gp-sub">Write-back + logic verification</div>
+      </div>
+      <div class="gov-pill">
+        <div class="gp-title">✅ UAT</div>
+        <div class="gp-sub">Edge cases before sign-off</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="fl">
+      <div class="avatar">JS</div>
+      <div>
+        <div class="fname">Jaswant Singh</div>
+        <div class="frole">AI Project Manager · Calgary, AB</div>
+      </div>
+    </div>
+    <div class="fright">CLAUDE.AI × NOTION · GOVERNED IMPLEMENTATION PATTERN</div>
+  </div>
+
+</div>
+</body>
+</html>
